@@ -110,6 +110,18 @@ body {
   overflow-x: hidden;
 }
 
+/* ============================================================
+   PERFORMANCE PATCH (Safe, No UI change)
+   Offscreen sections ko initial render se defer karta hai.
+   ============================================================ */
+@supports (content-visibility: auto) {
+  .section,
+  .site-footer {
+    content-visibility: auto;
+    contain-intrinsic-size: 1000px;
+  }
+}
+
 /* ===== Typography ===== */
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-display);
@@ -427,19 +439,6 @@ a:focus {
 /* ============================================================
    FIX A + FIX B + FIX F:
    .btn-outline used on LIGHT/WHITE backgrounds.
-   Contexts:
-     - .property-content .btn-outline   → "View Details" (3 places, on #ffffff)
-     - .about-content .btn-outline       → "Learn More About Us" (on #f8f9fa)
-     - .section-alternate .btn-outline   → any btn-outline on #f8f9fa sections
-
-   Old color: #d4af37
-     on white  (#ffffff) = 2.10:1 — ❌ FAIL
-     on light  (#f8f9fa) = 1.99:1 — ❌ FAIL
-
-   New color: #7a5c00 (--gold-accessible-dark)
-     on white  (#ffffff) = 6.25:1 — ✅ PASS
-     on light  (#f8f9fa) = 5.93:1 — ✅ PASS
-   Hue preserved — same gold family, only lightness reduced.
 ============================================================ */
 .property-content .btn-outline,
 .about-content .btn-outline,
@@ -475,19 +474,6 @@ a:focus {
 
 /* ============================================================
    FIX C: .section-subtitle
-   Old color: #a07d00
-     on white  (#ffffff) = 3.87:1 — ❌ FAIL
-     on light  (#f8f9fa) = 3.67:1 — ❌ FAIL
-
-   New color: #7a5c00 (--gold-accessible-dark)
-     on white  (#ffffff) = 6.25:1 — ✅ PASS
-     on light  (#f8f9fa) = 5.93:1 — ✅ PASS
-
-   This fixes:
-     - "Handpicked Selection" subtitle (Featured Properties)
-     - "About Us" subtitle (About section)  ← Issue 2
-     - "Client Reviews" subtitle (Testimonials) ← Issue 3
-   Hue preserved — same gold family.
 ============================================================ */
 .section-subtitle {
   font-family: var(--font-accent);
@@ -495,22 +481,22 @@ a:focus {
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 2px;
-  color: var(--gold-accessible-dark); /* WCAG FIX C: #a07d00 (3.87:1) → #7a5c00 (6.25:1) on white */
+  color: var(--gold-accessible-dark);
   margin-bottom: 0.5rem;
 }
 
 .section-title {
-  margin-bottom: 1rem;           /* inherits h2 color: --primary-dark — PASS */
+  margin-bottom: 1rem;
 }
 
 .section-description {
   font-size: 1.1rem;
-  color: var(--text-secondary);  /* #4a5c6d on white = 5.9:1 — PASS */
+  color: var(--text-secondary);
 }
 
 /* Alternate Background */
 .section-alternate {
-  background: var(--bg-light);   /* #f8f9fa */
+  background: var(--bg-light);
 }
 
 /* ===== Property Cards ===== */
@@ -563,8 +549,8 @@ a:focus {
   position: absolute;
   top: 1rem;
   right: 1rem;
-  background: var(--primary-gold);  /* #d4af37 bg */
-  color: var(--primary-dark);        /* #1a2332 on #d4af37 = 7.51:1 — PASS */
+  background: var(--primary-gold);
+  color: var(--primary-dark);
   font-family: var(--font-accent);
   font-weight: 700;
   font-size: 0.75rem;
@@ -582,20 +568,20 @@ a:focus {
   font-family: var(--font-display);
   font-size: 1.8rem;
   font-weight: 700;
-  color: var(--gold-accessible-dark); /* WCAG FIX: #d4af37 (2.10:1) → #7a5c00 (6.25:1) on white */
+  color: var(--gold-accessible-dark);
   margin-bottom: 0.5rem;
 }
 
 .property-title {
   font-size: 1.4rem;
-  margin-bottom: 0.75rem;        /* inherits heading color --primary-dark — PASS */
+  margin-bottom: 0.75rem;
 }
 
 .property-location {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  color: var(--text-secondary);  /* #4a5c6d on white = 5.9:1 — PASS */
+  color: var(--text-secondary);
   font-size: 0.95rem;
   margin-bottom: 1rem;
 }
@@ -607,7 +593,7 @@ a:focus {
 
 .property-description {
   font-size: 0.95rem;
-  color: var(--text-light);      /* #5e6b6c on white = 4.6:1 — PASS */
+  color: var(--text-light);
   margin-bottom: 1.5rem;
   line-height: 1.6;
 }
@@ -626,13 +612,13 @@ a:focus {
   align-items: center;
   gap: 0.4rem;
   font-size: 0.9rem;
-  color: var(--text-secondary);  /* #4a5c6d on white = 5.9:1 — PASS */
+  color: var(--text-secondary);
   font-weight: 600;
 }
 
 .feature-icon {
   font-size: 1.1rem;
-  color: var(--accent-teal);     /* #0e7a65 on white = 4.6:1 — PASS */
+  color: var(--accent-teal);
 }
 
 /* ===== Filter & Sort Bar ===== */
@@ -662,7 +648,7 @@ a:focus {
   font-size: 0.85rem;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  color: var(--text-primary);    /* #2c3e50 on #ffffff = 10.7:1 — PASS */
+  color: var(--text-primary);
 }
 
 .filter-group select {
@@ -671,7 +657,7 @@ a:focus {
   border-radius: 6px;
   font-family: var(--font-body);
   font-size: 1rem;
-  color: var(--text-primary);    /* #2c3e50 on #ffffff = 10.7:1 — PASS */
+  color: var(--text-primary);
   background: var(--bg-white);
   cursor: pointer;
   transition: all var(--transition-fast);
@@ -737,7 +723,7 @@ a:focus {
   font-family: var(--font-display);
   font-size: 3rem;
   font-weight: 700;
-  color: var(--gold-accessible-dark); /* WCAG FIX: #d4af37 (2.10:1) → #7a5c00 (6.25:1) on white */
+  color: var(--gold-accessible-dark);
   margin-bottom: 0.5rem;
 }
 
@@ -747,7 +733,7 @@ a:focus {
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 1px;
-  color: var(--text-secondary);  /* #4a5c6d on white = 5.9:1 — PASS */
+  color: var(--text-secondary);
 }
 
 /* ===== Testimonials ===== */
@@ -773,7 +759,7 @@ a:focus {
 
 .testimonial-quote {
   font-size: 3rem;
-  color: var(--primary-gold);   /* decorative, aria-hidden="true" — purely decorative */
+  color: var(--primary-gold);
   opacity: 0.3;
   position: absolute;
   top: 1rem;
@@ -784,7 +770,7 @@ a:focus {
 .testimonial-text {
   font-size: 1.05rem;
   line-height: 1.7;
-  color: var(--text-secondary);  /* #4a5c6d on white = 5.9:1 — PASS */
+  color: var(--text-secondary);
   margin-bottom: 1.5rem;
   padding-top: 2rem;
 }
@@ -799,27 +785,18 @@ a:focus {
 
 /* ============================================================
    FIX E: .author-avatar — Non-text Contrast (WCAG 1.4.11)
-   "picture/photo place" — the avatar circle boundary.
-
-   Old: background #d4af37 vs white card (#ffffff) = 2.10:1 — ❌ FAIL (needs 3:1)
-   New: background #a07d00 vs white card (#ffffff) = 3.87:1 — ✅ PASS
-
-   Text inside (initials "AK", "SF", "MH"):
-   Old: #1a2332 on #d4af37 = 7.51:1 — PASS (unchanged)
-   New: #1a2332 on #a07d00 = 4.08:1 — PASS for large text (19.2px bold ≥ 18.67px = 14pt bold)
-   Hue preserved — same gold family.
 ============================================================ */
 .author-avatar {
   width: 50px;
   height: 50px;
   border-radius: 50%;
-  background: #a07d00; /* WCAG FIX E: #d4af37 (2.10:1 non-text) → #a07d00 (3.87:1) vs white — PASS */
+  background: #a07d00;
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: 700;
   font-size: 1.2rem;
-  color: var(--primary-dark);   /* #1a2332 on #a07d00 = 4.08:1 (large text ≥ 14pt bold) — PASS */
+  color: var(--primary-dark);
 }
 .author-avatar img{
   width:50px;
@@ -830,12 +807,12 @@ a:focus {
 
 .author-info h4 {
   font-size: 1rem;
-  margin-bottom: 0.2rem;             /* inherits heading color --primary-dark — PASS */
+  margin-bottom: 0.2rem;
 }
 
 .author-info p {
   font-size: 0.85rem;
-  color: var(--text-light);          /* #5e6b6c on white = 4.6:1 — PASS */
+  color: var(--text-light);
   margin: 0;
 }
 
@@ -847,15 +824,15 @@ a:focus {
 }
 
 .contact-info {
-  background: var(--primary-dark);   /* #1a2332 */
-  color: white;                       /* white on #1a2332 = 16.8:1 — PASS */
+  background: var(--primary-dark);
+  color: white;
   padding: 3rem;
   border-radius: 12px;
   box-shadow: var(--shadow-lg);
 }
 
 .contact-info h3 {
-  color: white;                       /* white on #1a2332 = 16.8:1 — PASS */
+  color: white;
   margin-bottom: 2rem;
 }
 
@@ -868,27 +845,27 @@ a:focus {
 
 .contact-icon {
   font-size: 1.5rem;
-  color: var(--primary-gold);         /* #d4af37 on #1a2332 = 7.51:1 — PASS */
+  color: var(--primary-gold);
   min-width: 24px;
 }
 
 .contact-details h4 {
-  color: var(--primary-gold);         /* #d4af37 on #1a2332 = 7.51:1 — PASS */
+  color: var(--primary-gold);
   font-size: 1rem;
   margin-bottom: 0.5rem;
 }
 
 .contact-details p {
-  color: rgba(255, 255, 255, 0.9);    /* ~white on #1a2332 — PASS */
+  color: rgba(255, 255, 255, 0.9);
   margin: 0;
 }
 
 .contact-details a {
-  color: rgba(255, 255, 255, 0.9);    /* ~white on #1a2332 — PASS */
+  color: rgba(255, 255, 255, 0.9);
 }
 
 .contact-details a:hover {
-  color: var(--primary-gold);         /* #d4af37 on #1a2332 = 7.51:1 — PASS */
+  color: var(--primary-gold);
 }
 
 .map-container {
@@ -923,7 +900,7 @@ a:focus {
   font-size: 0.9rem;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  color: var(--text-primary);    /* #2c3e50 on #ffffff = 10.7:1 — PASS */
+  color: var(--text-primary);
   margin-bottom: 0.5rem;
 }
 
@@ -935,7 +912,7 @@ a:focus {
   border-radius: 6px;
   font-family: var(--font-body);
   font-size: 1rem;
-  color: var(--text-primary);    /* #2c3e50 on #ffffff = 10.7:1 — PASS */
+  color: var(--text-primary);
   background: var(--bg-white);
   transition: all var(--transition-fast);
 }
@@ -954,7 +931,7 @@ a:focus {
 
 .form-error {
   display: none;
-  color: #c0392b; /* WCAG FIX (previous pass): #e74c3c (3.5:1) → #c0392b (5.1:1) on white — PASS */
+  color: #c0392b;
   font-size: 0.85rem;
   margin-top: 0.5rem;
   font-weight: 600;
@@ -962,7 +939,7 @@ a:focus {
 
 .form-group.error input,
 .form-group.error textarea {
-  border-color: #c0392b; /* matches form-error color — PASS */
+  border-color: #c0392b;
 }
 
 .form-group.error .form-error {
@@ -971,7 +948,7 @@ a:focus {
 
 .form-success {
   display: none;
-  background: #1a7a42; /* WCAG FIX (previous pass): #27ae60 → #1a7a42 | white text = 7.4:1 — PASS */
+  background: #1a7a42;
   color: white;
   padding: 1rem;
   border-radius: 6px;
@@ -998,7 +975,7 @@ a:focus {
 
 /* ===== Footer ===== */
 .site-footer {
-  background: var(--primary-dark);   /* #1a2332 */
+  background: var(--primary-dark);
   color: white;
   padding: 4rem 0 2rem;
   margin-top: var(--spacing-xl);
@@ -1012,13 +989,13 @@ a:focus {
 }
 
 .footer-section h3 {
-  color: var(--primary-gold);         /* #d4af37 on #1a2332 = 7.51:1 — PASS */
+  color: var(--primary-gold);
   margin-bottom: 1.5rem;
   font-size: 1.3rem;
 }
 
 .footer-section p {
-  color: rgba(255, 255, 255, 0.8);    /* effectively ~light on #1a2332 — PASS */
+  color: rgba(255, 255, 255, 0.8);
   line-height: 1.7;
 }
 
@@ -1031,12 +1008,12 @@ a:focus {
 }
 
 .footer-links a {
-  color: rgba(255, 255, 255, 0.8);    /* ~white on #1a2332 — PASS */
+  color: rgba(255, 255, 255, 0.8);
   transition: all var(--transition-fast);
 }
 
 .footer-links a:hover {
-  color: var(--primary-gold);         /* #d4af37 on #1a2332 = 7.51:1 — PASS */
+  color: var(--primary-gold);
   padding-left: 5px;
 }
 
@@ -1054,14 +1031,14 @@ a:focus {
   display: flex;
   align-items: center;
   justify-content: center;
-  color: white;                       /* white on dark semi-transparent bg — PASS */
+  color: white;
   font-size: 1.2rem;
   transition: all var(--transition-smooth);
 }
 
 .social-link:hover {
   background: var(--primary-gold);
-  color: var(--primary-dark);         /* #1a2332 on #d4af37 = 7.51:1 — PASS */
+  color: var(--primary-dark);
   transform: translateY(-3px);
 }
 
@@ -1072,23 +1049,8 @@ a:focus {
   color: rgba(255, 255, 255, 0.8);
 }
 
-/* ============================================================
-   FIX D: .footer-bottom p — Footer copyright/designed-by text
-   ROOT CAUSE: Global `p { color: var(--text-secondary) }` (#4a5c6d)
-   overrides the inherited rgba(255,255,255,0.7) from .footer-bottom,
-   because element selector specificity beats inheritance.
-
-   Result: <p> inside footer gets #4a5c6d on dark #1a2332 = 2.29:1 — ❌ FAIL
-   Fix: Explicitly target .footer-bottom p with light color.
-
-   rgba(255,255,255,0.9) on #1a2332 = effective ~12.5:1 — ✅ PASS
-   This fixes: "© 2024 PakVista Realty. All rights reserved."
-               "| Designed for excellence in real estate."
-               Year name, rights text, designed-by text.
-============================================================ */
 .footer-bottom p {
   color: rgba(255, 255, 255, 0.9) !important;
-  /* WCAG FIX D: #4a5c6d (2.29:1) → rgba(255,255,255,0.9) (~12.5:1) on #1a2332 — ✅ PASS */
   margin-bottom: 0;
 }
 
@@ -1184,7 +1146,7 @@ a:focus {
 
 /* ===== Utility Classes ===== */
 .text-center { text-align: center; }
-.text-gold { color: var(--gold-accessible-dark); } /* WCAG FIX: #d4af37 → #7a5c00 | 6.25:1 on white */
+.text-gold { color: var(--gold-accessible-dark); }
 .mb-0 { margin-bottom: 0; }
 .mt-2 { margin-top: 2rem; }
 
@@ -1194,7 +1156,7 @@ a:focus {
   width: 1px;
   height: 1px;
   padding: 0;
-  margin: -1px;
+  margin:  -1px;
   overflow: hidden;
   clip: rect(0, 0, 0, 0);
   white-space: nowrap;
@@ -1216,3 +1178,4 @@ a:focus {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
+}
